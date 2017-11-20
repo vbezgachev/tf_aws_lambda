@@ -40,3 +40,26 @@ check ```~/.aws```. There you should find _config.txt_ and _credentials.txt_
     - POST method with image as body (works well on small images)
     - Store test images into S3 bucket + POST method that gets bucket and image name as parameters 
       (more flexible and works better for big images)
+
+11. Preparing TensorFlow for Lambda upload. Create EC2 Ubuntu Free Tier instance
+```
+ssh ec2-54-183-117-12.us-west-1.compute.amazonaws.com
+scp ubuntu@ec2-54-183-117-12.us-west-1.compute.amazonaws.com:~/tf_env.zip ~/Documents/Study/tf_aws_lambda/tf_env.zip
+```
+
+```
+sudo apt-get update
+sudo apt-get install zip
+sudo apt-get install python3-dev
+sudo apt install python3-pip
+pip3 install --upgrade pip
+pip3 install virtualenv
+virtualenv tf_env
+source tf_env/bin/activate
+pip install tensorflow
+```
+```
+touch ~/tf_env/lib/python3.5/site-packages/google/__init__.py
+cd ~/tf_env/lib/python3.5/site-packages
+zip -r ~/tf_env.zip . --exclude \*.pyc *.DS_Store /external/* /tensorflow/contrib/* /tensorflow/include/unsupported/* /tensorflow/examples/*
+```
