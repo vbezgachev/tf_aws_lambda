@@ -1,0 +1,17 @@
+frameworkVersion: ">=1.2.1"
+
+service: tensorflow-lambda-regression
+
+provider:
+  name: aws
+  runtime: python3.5
+  stage: dev
+  region: us-west-1
+
+functions:
+  predict:
+    handler: handler.predict
+    events:
+      - http:
+          path: /predict
+          method: get

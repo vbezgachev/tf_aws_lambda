@@ -1,0 +1,10 @@
+.DS_Store
+
+checkpoints*/
+data/
+__pycache__/
+export/
+.vscode/
+*.pkl
+model/
+svnh_test_images/
