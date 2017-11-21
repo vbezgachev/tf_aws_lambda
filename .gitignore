@@ -8,3 +8,4 @@ export/
 *.pkl
 model/
 svnh_test_images/
+*.pyc
