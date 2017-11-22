@@ -23,22 +23,26 @@ gan_model = GANModel(model_dir)
 def get_param_from_url(event, param_name):
     '''
     Retrieve query parameters from a Lambda call. Parameters are passed through the
-    event object as a dictionary.
+    event object as a dictionary. We interested in 'queryStringParameters', since
+    the bucket name and the key are passed in the query string
 
     :param event: the event as input in the Lambda function
     :param param_name: the name of the parameter in the query string
     :return: the parameter value
     '''
     params = event['queryStringParameters']
-    return params[param_name]
+    if param_name in params:
+        return params[param_name]
+    return None
 
 
-def return_lambda_gateway_response(code, body):
+def lambda_gateway_response(code, body):
     '''
-    This function wraps around the endpoint responses in a uniform and Lambda-friendly way
+    This function wraps around the endpoint responses in a uniform and Lambda-friendly way.
+    We have to return an HTTP response: status code, content-type in header and body
 
-    :param code: HTTP response code (200 for OK), must be an int
-    :param json_body: response body as JSON
+    :param code: HTTP response code (200 for OK), must be integer
+    :param body: response body as JSON
     '''
     return {"statusCode": code,
             "headers": {"Content-Type": "application/json"},
@@ -75,8 +79,13 @@ def predict(event, context):
                              'probability': str(res[1])} for res in results]
             print 'Results retrieved: {}'.format(results_json)
         else:
-            raise Exception('Input parameters are invalid: bucket name and key must be specified')
+            message = 'Input parameters are invalid: bucket name and key must be specified'
+            return lambda_gateway_response(400, {'message': message})
     except Exception as exception:
-        raise exception
+        error_response = {
+            'error_message': "Unexpected error",
+            'stack_trace': str(exception)
+        }
+        return lambda_gateway_response(503, error_response)
 
-    return return_lambda_gateway_response(200, {'prediction_result': results_json})
+    return lambda_gateway_response(200, {'prediction_result': results_json})
