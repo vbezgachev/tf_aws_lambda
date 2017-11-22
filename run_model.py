@@ -1,8 +1,7 @@
 import os
 import zipfile
+import json
 
-import boto3
-import botocore
 import tensorflow as tf
 
 import settings
@@ -69,7 +68,8 @@ def main():
         scores = gan_model.predict(image)
 
         # print results
-        print "Scores: {}".format(scores)
+        results_json = [{'digit': str(score[0]), 'probability': str(score[1])} for score in scores]
+        print "Scores: {}".format(json.dumps(results_json))
 
 
 if __name__ == '__main__':

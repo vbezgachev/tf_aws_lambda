@@ -7,7 +7,7 @@ This is needed so that the script running on AWS will pick up the pre-compiled d
 from the vendored folder
 '''
 current_location = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(current_location, "vendored"))
+sys.path.append(os.path.join(current_location, 'vendored'))
 
 from gan_model import GANModel
 import utils
@@ -33,14 +33,16 @@ def get_param_from_url(event, param_name):
     return params[param_name]
 
 
-def return_lambda_gateway_response(code, json_body):
-    """
+def return_lambda_gateway_response(code, body):
+    '''
     This function wraps around the endpoint responses in a uniform and Lambda-friendly way
 
     :param code: HTTP response code (200 for OK), must be an int
     :param json_body: response body as JSON
-    """
-    return {"statusCode": code, "body": json_body}
+    '''
+    return {"statusCode": code,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps(body)}
 
 
 def predict(event, context):
@@ -69,15 +71,12 @@ def predict(event, context):
         if bucket_name and key:
             image = utils.download_image_from_S3_bucket(bucket_name, key)
             results = gan_model.predict(image)
-            print 'Results retrieved: {}'.format(results)
-            results_json = [{'digit': res[0], 'probability': res[1]} for res in results]
+            results_json = [{'digit': str(res[0]),
+                             'probability': str(res[1])} for res in results]
+            print 'Results retrieved: {}'.format(results_json)
         else:
-            raise "Input parameter has invalid type: float expected"
-    except Exception as e:
-        error_response = {
-            'error_message': "Unexpected error",
-            'stack_trace': str(e)
-        }
-        return return_lambda_gateway_response(500, error_response)
+            raise Exception('Input parameters are invalid: bucket name and key must be specified')
+    except Exception as exception:
+        raise exception
 
     return return_lambda_gateway_response(200, {'prediction_result': results_json})

@@ -76,3 +76,5 @@ serverless remove
 ```
 DO NOT DELETE LAMBDA FUNCTIONS MANUALLY, OTHERWISE SERVERLESS WILL FAIL TO DEPLOY NEXT TIME!
 Be aware - Serverless uses your AWS account to put stuff to S3 bucket!
+
+13. Adjust policy for a lambda function role to be able to access S3 bucket
