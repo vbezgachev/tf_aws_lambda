@@ -16,6 +16,7 @@ import utils
 Declare global objects living across requests
 '''
 model_dir = utils.create_model_dir()
+utils.download_model_from_S3_bucket(model_dir)
 gan_model = GANModel(model_dir)
 
 
@@ -63,12 +64,12 @@ def predict(event, context):
         bucket_name = get_param_from_url(event, 'bucket')
         key = get_param_from_url(event, 'key')
 
-        print('Predict function called! Bucket/key is {}/{}'.format(bucket_name, key))
+        print 'Predict function called! Bucket/key is {}/{}'.format(bucket_name, key)
 
         if bucket_name and key:
             image = utils.download_image_from_S3_bucket(bucket_name, key)
             results = gan_model.predict(image)
-            print('Results retrieved: {}'.format(results))
+            print 'Results retrieved: {}'.format(results)
             results_json = [{'digit': res[0], 'probability': res[1]} for res in results]
         else:
             raise "Input parameter has invalid type: float expected"

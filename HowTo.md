@@ -53,9 +53,7 @@ scp ubuntu@ec2-54-183-117-12.us-west-1.compute.amazonaws.com:~/tf_env.zip ~/Docu
 
 ```
 sudo apt-get update
-sudo apt-get install zip
-sudo apt-get install python-dev
-sudo apt install python-pip
+sudo apt-get install -y zip python-dev python-pip
 export LC_ALL=C
 pip install --upgrade pip
 sudo pip install virtualenv
