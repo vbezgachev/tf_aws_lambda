@@ -62,10 +62,19 @@ sudo pip install virtualenv
 virtualenv tf_env
 source tf_env/bin/activate
 pip install tensorflow
-pip install boto3
 ```
 ```
 touch ~/tf_env/lib/python2.7/site-packages/google/__init__.py
 cd ~/tf_env/lib/python2.7/site-packages
-zip -r ~/tf_env.zip . --exclude \*.pyc *.DS_Store /external/* /tensorflow/contrib/* /tensorflow/include/unsupported/* /tensorflow/examples/* /tensorboard/* /tensorflow_tensorboard-0.4.0rc3.dist-info/* /pip/* /pip-9.0.1.dist-info/* /botocore/data/ec2/* /botocore/data/cloudfront/*
+zip -r ~/tf_env.zip . --exclude \*.pyc *.DS_Store /external/* /tensorflow/contrib/* /tensorflow/include/unsupported/* /tensorflow/examples/* /tensorboard/* /tensorflow_tensorboard-0.4.0rc3.dist-info/* /pip/* /pip-9.0.1.dist-info/*
 ```
+12. For service deployement:
+```
+serverless deploy
+```
+For service removal:
+```
+serverless remove
+```
+DO NOT DELETE LAMBDA FUNCTIONS MANUALLY, OTHERWISE SERVERLESS WILL FAIL TO DEPLOY NEXT TIME!
+Be aware - Serverless uses your AWS account to put stuff to S3 bucket!

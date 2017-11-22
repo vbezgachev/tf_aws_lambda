@@ -17,8 +17,9 @@ def create_model_dir():
     # Check target directory for existence and create it if needed.
     model_dir = '/tmp/gan_model'
     if not os.path.exists(model_dir):
-        print('Going to copy a model directory {}...'.format(model_dir))
+        print('Going to create a model directory {}...'.format(model_dir))
         os.makedirs(model_dir)
+        print('...success!')
 
     return model_dir
 
@@ -33,6 +34,7 @@ def download_image_from_S3_bucket(bucket_name, key):
     '''
     s3 = boto3.resource('s3')
     try:
+        print('Downloading the image from S3 bucket {}/{}'.format(bucket_name, key))
         s3_bucket = s3.Bucket(bucket_name)
         data = io.BytesIO()
 
@@ -40,6 +42,7 @@ def download_image_from_S3_bucket(bucket_name, key):
             key,
             data)
         data.seek(0)
+        print('Successfully downloaded the image')
 
         return data.read()
 

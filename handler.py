@@ -2,15 +2,15 @@ import os
 import sys
 import json
 
-from gan_model import GANModel
-import utils
-
 '''
 This is needed so that the script running on AWS will pick up the pre-compiled dependencies
 from the vendored folder
 '''
 current_location = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(current_location, "vendored"))
+
+from gan_model import GANModel
+import utils
 
 '''
 Declare global objects living across requests
@@ -61,11 +61,14 @@ def predict(event, context):
 
     try:
         bucket_name = get_param_from_url(event, 'bucket')
-        image_name = get_param_from_url(event, 'key')
+        key = get_param_from_url(event, 'key')
 
-        if bucket_name and image_name:
-            image = utils.download_image_from_S3_bucket(bucket_name, image_name)
+        print('Predict function called! Bucket/key is {}/{}'.format(bucket_name, key))
+
+        if bucket_name and key:
+            image = utils.download_image_from_S3_bucket(bucket_name, key)
             results = gan_model.predict(image)
+            print('Results retrieved: {}'.format(results))
             results_json = [{'digit': res[0], 'probability': res[1]} for res in results]
         else:
             raise "Input parameter has invalid type: float expected"
