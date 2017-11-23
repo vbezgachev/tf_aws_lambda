@@ -40,7 +40,7 @@ def download_model_from_bucket(model_dir):
     model_path = model_dir + '/' + settings.MODEL_PROTOBUF_FILE_NAME
     if not os.path.isfile(model_path):
         print 'Going to download a model file from S3 bucket {}/{}...'.format(
-            settings.S3_BUCKET_NAME, settings.MODEL_ZIP_FILE_NAME
+            settings.S3_MODEL_BUCKET_NAME, settings.MODEL_ZIP_FILE_NAME
         )
 
         # create S3 resource
@@ -49,7 +49,7 @@ def download_model_from_bucket(model_dir):
 
         try:
             # download ZIP
-            s3_bucket = s3_res.Bucket(settings.S3_BUCKET_NAME)
+            s3_bucket = s3_res.Bucket(settings.S3_MODEL_BUCKET_NAME)
             s3_bucket.download_file(
                 settings.MODEL_ZIP_FILE_NAME,
                 model_zip_file)

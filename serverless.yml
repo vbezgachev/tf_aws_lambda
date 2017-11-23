@@ -7,6 +7,15 @@ provider:
   runtime: python2.7
   stage: dev
   region: us-west-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+      Resource:
+        - "arn:aws:s3:::vb-tf-aws-lambda-model"
+        - "arn:aws:s3:::vb-tf-aws-lambda-model/*"
+        - "arn:aws:s3:::vb-tf-aws-lambda-images"
+        - "arn:aws:s3:::vb-tf-aws-lambda-images/*"
 
 functions:
   predict:
