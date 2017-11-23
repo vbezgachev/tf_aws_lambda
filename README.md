@@ -1,0 +1,3 @@
+## Serverless serving of a TensorFlow model
+This is an extension of my [TensorFlow Serving test project](https://github.com/Vetal1977/tf_serving_example). It introduces a serverless serving of a sample GAN model, implemented with TensorFlow. It receives REST requests to predict [Street View House Numbers](http://ufldl.stanford.edu/housenumbers/).  
+Mentioned GAN model is trained using [semi-supervised learning](https://en.wikipedia.org/wiki/Semi-supervised_learning) technique and bases on the model taught at [Udacity Deep Learning Foundations](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) course. The original Jupyter Notebook can be found at [GitHub](https://github.com/udacity/deep-learning/tree/master/semi-supervised).  
