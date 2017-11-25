@@ -19,13 +19,17 @@ def download_model_from_local_file(model_dir):
     :param model_dir: Target directory to copy the model
     '''
     # check the model file for existence amd copy if needed
-    model_path = model_dir + '/' + settings.MODEL_PROTOBUF_FILE_NAME
+    protobuf_file_name = utils.get_env_var_or_raise_exception(
+        settings.MODEL_PROTOBUF_FILE_NAME_ENV_VAR)
+    model_path = model_dir + '/' + protobuf_file_name
     if not os.path.isfile(model_path):
         current_directory = os.path.dirname(os.path.realpath(__file__))
-        model_zip_file = current_directory + '/model' +\
-                        '/' + settings.MODEL_ZIP_FILE_NAME
-        print 'Going to copy a model file from {}...'.format(model_zip_file)
-        with zipfile.ZipFile(model_zip_file, 'r') as zip_ref:
+        model_zip_file_name = utils.get_env_var_or_raise_exception(
+            settings.MODEL_ZIP_FILE_NAME_ENV_VAR)
+        model_zip_file_path = current_directory + '/model' +\
+                        '/' + model_zip_file_name
+        print 'Going to copy a model file from {}...'.format(model_zip_file_path)
+        with zipfile.ZipFile(model_zip_file_path, 'r') as zip_ref:
             zip_ref.extractall(model_dir)
 
 

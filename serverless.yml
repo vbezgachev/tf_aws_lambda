@@ -8,6 +8,10 @@ provider:
   stage: dev
   region: us-west-1
   timeout: 30
+  environment:
+    TF_AWS_MODEL_ZIP_FILE_NAME: gan_model.zip
+    TF_AWS_MODEL_PROTOBUF_FILE_NAME: saved_model.pb
+    TF_AWS_S3_MODEL_BUCKET_NAME: vb-tf-aws-lambda-model
   iamRoleStatements:
     - Effect: "Allow"
       Action:

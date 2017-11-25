@@ -11,6 +11,18 @@ import botocore
 import settings
 
 
+def get_env_var_or_raise_exception(env_var_name):
+    '''
+    Get a value of the environment variable or raise an exception if it does not exist
+
+    :param env_var_name: Environment variable name
+    '''
+    try:
+        return os.environ[env_var_name]
+    except Exception as _:
+        raise Exception('Required environment variable {} not found!'.format(env_var_name))
+
+
 def create_model_dir():
     '''
     Check target model directory for existence and create it if needed.
@@ -37,29 +49,32 @@ def download_model_from_bucket(model_dir):
     Downloads GAN model protobuf from S3 bucket if it was not downloaded yet
     '''
     # check the model file for existence and download if needed
-    model_path = model_dir + '/' + settings.MODEL_PROTOBUF_FILE_NAME
+    protobuf_file_name = get_env_var_or_raise_exception(settings.MODEL_PROTOBUF_FILE_NAME_ENV_VAR)
+    model_path = model_dir + '/' + protobuf_file_name
     if not os.path.isfile(model_path):
+        bucket_name = get_env_var_or_raise_exception(settings.S3_MODEL_BUCKET_NAME_ENV_VAR)
+        model_zip_file_name = get_env_var_or_raise_exception(settings.MODEL_ZIP_FILE_NAME_ENV_VAR)
         print 'Going to download a model file from S3 bucket {}/{}...'.format(
-            settings.S3_MODEL_BUCKET_NAME, settings.MODEL_ZIP_FILE_NAME
+            bucket_name, model_zip_file_name
         )
 
         # create S3 resource
         s3_res = boto3.resource('s3')
-        model_zip_file = model_dir + '/' + settings.MODEL_ZIP_FILE_NAME
+        target_model_zip_path = model_dir + '/' + model_zip_file_name
 
         try:
             # download ZIP
-            s3_bucket = s3_res.Bucket(settings.S3_MODEL_BUCKET_NAME)
+            s3_bucket = s3_res.Bucket(bucket_name)
             s3_bucket.download_file(
-                settings.MODEL_ZIP_FILE_NAME,
-                model_zip_file)
+                model_zip_file_name,
+                target_model_zip_path)
 
             # extract everything from zip
-            with zipfile.ZipFile(model_zip_file, 'r') as zip_ref:
+            with zipfile.ZipFile(target_model_zip_path, 'r') as zip_ref:
                 zip_ref.extractall(model_dir)
 
             # delete zip
-            os.remove(model_zip_file)
+            os.remove(target_model_zip_path)
         except botocore.exceptions.ClientError as exception:
             if exception.response['Error']['Code'] == "404":
                 print "The object does not exist."
@@ -93,8 +108,8 @@ def download_image_from_bucket(bucket_name, key):
 
         return data.read()
 
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == "404":
+    except botocore.exceptions.ClientError as exception:
+        if exception.response['Error']['Code'] == "404":
             print "The object does not exist."
         else:
             raise
